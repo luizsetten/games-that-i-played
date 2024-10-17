@@ -28,15 +28,16 @@ provider:
             - Fn::GetAtt: [GamesTable, Arn]
   environment:
     GAMES_TABLE: ${param:tableName}
-    
-plugins:
-  - serverless-plugin-typescript
 
 functions:
-  api:
-    handler: handler.handler
+  create-games:
+    handler: handler.create
     events:
-      - httpApi: "*"
+      - httpApi: "POST /games"
+  list-games:
+    handler: handler.list
+    events:
+      - httpApi: "GET /games"
 
 resources:
   Resources:
@@ -46,8 +47,12 @@ resources:
         AttributeDefinitions:
           - AttributeName: gameId
             AttributeType: S
+          - AttributeName: name
+            AttributeType: S
         KeySchema:
           - AttributeName: gameId
             KeyType: HASH
+          - AttributeName: name
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${param:tableName}
