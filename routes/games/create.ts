@@ -1,5 +1,5 @@
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { LambdaFunctionURLHandler } from "aws-lambda";
 import { v4 } from "uuid";
 
@@ -22,13 +22,13 @@ export const createGameLambda: LambdaFunctionURLHandler = async (event, context,
 
 
   try {
-    const { Item } = await docClient.send(new GetCommand({
-      Key: {
-        name
-      }, TableName: GAMES_TABLE
+    const { Items } = await docClient.send(new ScanCommand({
+      TableName: GAMES_TABLE,
+      FilterExpression: "name = :name_search",
+      ExpressionAttributeValues: { ":name_search": name }
     }));
 
-    if (Item) {
+    if (Items && Items.length > 0) {
       return {
         statusCode: 409,
         body: JSON.stringify({ error: "Game with the same name already exists" })
