@@ -28,6 +28,9 @@ provider:
             - Fn::GetAtt: [GamesTable, Arn]
   environment:
     GAMES_TABLE: ${param:tableName}
+    
+plugins:
+  - serverless-plugin-typescript
 
 functions:
   api:
