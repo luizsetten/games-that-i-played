@@ -38,6 +38,10 @@ functions:
     handler: handler.list
     events:
       - httpApi: "GET /games"
+  get-game:
+    handler: handler.get
+    events:
+      - httpApi: "GET /games/{gameId}"
 
 resources:
   Resources:

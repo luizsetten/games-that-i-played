@@ -22,11 +22,14 @@ export const createGameLambda: LambdaFunctionURLHandler = async (event, context,
 
 
   try {
-    const { Items } = await docClient.send(new ScanCommand({
+    const scanCommandParams = {
       TableName: GAMES_TABLE,
       FilterExpression: "name = :name_search",
       ExpressionAttributeValues: { ":name_search": name }
-    }));
+    };
+
+    const scanCommand = new ScanCommand(scanCommandParams);
+    const { Items } = await docClient.send(scanCommand);
 
     if (Items && Items.length > 0) {
       return {
