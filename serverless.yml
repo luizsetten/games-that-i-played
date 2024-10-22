@@ -42,6 +42,14 @@ functions:
     handler: handler.get
     events:
       - httpApi: "GET /games/{gameId}"
+  update-game:
+    handler: handler.update
+    events:
+      - httpApi: "PUT /games/{gameId}"
+  delete-game:
+    handler: handler.delete
+    events:
+      - httpApi: "DELETE /games/{gameId}"
 
 resources:
   Resources:
@@ -51,12 +59,8 @@ resources:
         AttributeDefinitions:
           - AttributeName: gameId
             AttributeType: S
-          - AttributeName: name
-            AttributeType: S
         KeySchema:
           - AttributeName: gameId
             KeyType: HASH
-          - AttributeName: name
-            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${param:tableName}
