@@ -6,7 +6,11 @@ app: games-that-i-played
 service: games-that-i-played
 
 stages:
+  prod:
+    observability: true
+
   default:
+    observability: false
     params:
       tableName: "games-table-${sls:stage}"
 
