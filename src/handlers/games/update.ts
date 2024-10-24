@@ -2,44 +2,24 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
 	DynamoDBDocumentClient,
 	GetCommand,
+	type GetCommandInput,
 	UpdateCommand,
 	type UpdateCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import type { LambdaFunctionURLHandler } from "aws-lambda";
+import { parseResponse } from "../../utils/parseResponse";
+import { validateParamsUpdateGame } from "../../validators/validateParamsUpdateGame";
+import { ValidationError } from "../../errors/ValidationError";
 
 const GAMES_TABLE = process.env.GAMES_TABLE;
 const client = new DynamoDBClient();
 const docClient = DynamoDBDocumentClient.from(client);
 
-export const updateGameLambda: LambdaFunctionURLHandler = async (
-	event,
-	context,
-	callback,
-) => {
-	const gameId = event.pathParameters?.gameId;
-
-	if (!gameId) {
-		return {
-			statusCode: 401,
-			body: JSON.stringify({ error: '"gameId" is required' }),
-		};
-	}
-
-	if (!event.body) return { statusCode: 400 };
-
-	const body = JSON.parse(event.body);
-
-	const { name } = body;
-
-	if (typeof name !== "string") {
-		return {
-			statusCode: 400,
-			body: JSON.stringify({ error: "Missing 'name' in request body" }),
-		};
-	}
-
+export const updateGameLambda: LambdaFunctionURLHandler = async (event) => {
 	try {
-		const getCommand = {
+		const { gameId, name } = validateParamsUpdateGame(event);
+
+		const getCommand: GetCommandInput = {
 			TableName: GAMES_TABLE,
 			Key: {
 				gameId,
@@ -49,12 +29,7 @@ export const updateGameLambda: LambdaFunctionURLHandler = async (
 		const scanCommand = new GetCommand(getCommand);
 		const { Item } = await docClient.send(scanCommand);
 
-		if (!Item) {
-			return {
-				statusCode: 404,
-				body: JSON.stringify({ error: "Game not found" }),
-			};
-		}
+		if (!Item) return parseResponse(404, { error: "Game not found" });
 
 		const params: UpdateCommandInput = {
 			TableName: GAMES_TABLE,
@@ -67,15 +42,13 @@ export const updateGameLambda: LambdaFunctionURLHandler = async (
 		const command = new UpdateCommand(params);
 		await docClient.send(command);
 
-		return {
-			statusCode: 201,
-			body: JSON.stringify({ id: gameId }),
-		};
+		return parseResponse(201, { id: gameId });
 	} catch (error) {
 		console.error(error);
-		return {
-			statusCode: 500,
-			body: JSON.stringify({ message: "Could not update game", error }),
-		};
+
+		if (error instanceof ValidationError)
+			return parseResponse(401, { error: error.message });
+
+		return parseResponse(500, { error: "Could not update game" });
 	}
 };
