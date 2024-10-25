@@ -1,8 +1,8 @@
-import { createGameLambda } from "./routes/games/create";
-import { deleteGameLambda } from "./routes/games/delete";
-import { getGameLambda } from "./routes/games/get";
-import { listGamesLambda } from "./routes/games/list";
-import { updateGameLambda } from "./routes/games/update";
+import { createGameLambda } from "./src/handlers/games/create";
+import { deleteGameLambda } from "./src/handlers/games/delete";
+import { getGameLambda } from "./src/handlers/games/get";
+import { listGamesLambda } from "./src/handlers/games/list";
+import { updateGameLambda } from "./src/handlers/games/update";
 
 module.exports.create = createGameLambda;
 module.exports.list = listGamesLambda;
