@@ -1,39 +1,47 @@
-<!--
-title: 'Serverless Framework Node Express API service backed by DynamoDB on AWS'
-description: 'This template demonstrates how to develop and deploy a simple Node Express API service backed by DynamoDB running on AWS Lambda using the Serverless Framework.'
-layout: Doc
-framework: v4
-platform: AWS
-language: nodeJS
-priority: 1
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, Inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Games That I Played
 
-# Serverless Framework Node Express API on AWS
+This repository provides a serverless API for managing a list of games that you have played. It is built using the Serverless Framework, Node.js, and TypeScript, and it runs on AWS Lambda with DynamoDB as the backend.
 
-This template demonstrates how to develop and deploy a simple Node Express API service, backed by DynamoDB table, running on AWS Lambda using the Serverless Framework.
+## Features
 
-This template configures a single function, `api`, which is responsible for handling all incoming requests using the `httpApi` event. To learn more about `httpApi` event configuration options, please refer to [httpApi event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api/). As the event is configured in a way to accept all incoming requests, the Express.js framework is responsible for routing and handling requests internally. This implementation uses the `serverless-http` package to transform the incoming event request payloads to payloads compatible with Express.js. To learn more about `serverless-http`, please refer to the [serverless-http README](https://github.com/dougmoscrop/serverless-http).
+- **Serverless Architecture**: Uses AWS Lambda for a scalable, cost-efficient solution.
+- **API Development**: Provides endpoints to manage game data.
+- **DynamoDB Integration**: Uses DynamoDB for data storage.
 
-Additionally, it also handles provisioning of a DynamoDB database that is used for storing data about users. The Express.js application exposes two endpoints, `POST /users` and `GET /user/:userId`, which create and retrieve a user record.
+## Prerequisites
 
-## Usage
+- [Node.js](https://nodejs.org/)
+- [Serverless Framework](https://www.serverless.com/)
+- AWS Account
 
-### Deployment
+## Getting Started
 
-Install dependencies with:
+1. **Clone the repository**:
 
-```
-npm install
-```
+   ```
+   git clone https://github.com/luizsetten/games-that-i-played.git
+   ```
 
-and then deploy with:
+2. **Install dependencies**:
+
+   ```
+    cd games-that-i-played
+    npm install
+   ```
+
+3. **Configure AWS Credentials:** Make sure your AWS credentials are set up properly.
+
+## Deployment
+
+- _Note_: Before deploying create `.env` file following the example of `.env.example` filling it with your credentials.
+
+To deploy the project, use the Serverless Framework:
 
 ```
 serverless deploy
 ```
+
+This will deploy the API to AWS Lambda.
 
 After running deploy, you should see output similar to:
 
@@ -47,35 +55,7 @@ functions:
   api: aws-node-express-dynamodb-api-dev-api (3.8 MB)
 ```
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [`httpApi` event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api/). Additionally, in current configuration, the DynamoDB table will be removed when running `serverless remove`. To retain the DynamoDB table even after removal of the stack, add `DeletionPolicy: Retain` to its resource definition.
-
-### Invocation
-
-After successful deployment, you can create a new user by calling the corresponding endpoint:
-
-```
-curl --request POST 'https://xxxxxx.execute-api.us-east-1.amazonaws.com/users' --header 'Content-Type: application/json' --data-raw '{"name": "John", "userId": "someUserId"}'
-```
-
-Which should result in the following response:
-
-```json
-{ "userId": "someUserId", "name": "John" }
-```
-
-You can later retrieve the user by `userId` by calling the following endpoint:
-
-```
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/users/someUserId
-```
-
-Which should result in the following response:
-
-```json
-{ "userId": "someUserId", "name": "John" }
-```
-
-### Local development
+## Local development
 
 The easiest way to develop and test your function is to use the `dev` command:
 
@@ -88,3 +68,22 @@ This will start a local emulator of AWS Lambda and tunnel your requests to and f
 Now you can invoke the function as before, but this time the function will be executed locally. Now you can develop your function locally, invoke it, and see the results immediately without having to re-deploy.
 
 When you are done developing, don't forget to run `serverless deploy` to deploy the function to the cloud.
+
+## Endpoints
+
+    GET /games: Retrieve a list of games.
+    POST /games: Add a new game.
+    PUT /games/{id}: Update game details.
+    DELETE /games/{id}: Delete a game.
+
+## Tech Stack
+
+    Node.js: JavaScript runtime environment.
+    TypeScript: Typed superset of JavaScript.
+    Serverless Framework: Framework for building serverless applications.
+    AWS Lambda: Serverless compute service.
+    DynamoDB: NoSQL database service.
+
+## License
+
+This project is licensed under the MIT License.

@@ -6,26 +6,18 @@ import {
 	GetCommand,
 } from "@aws-sdk/lib-dynamodb";
 import type { LambdaFunctionURLHandler } from "aws-lambda";
+import { validateParamsDeleteGame } from "../../validators/validateParamsDeleteGame";
+import { parseResponse } from "../../utils/parseResponse";
+import { ValidationError } from "../../errors/ValidationError";
 
 const GAMES_TABLE = process.env.GAMES_TABLE;
 const client = new DynamoDBClient();
 const docClient = DynamoDBDocumentClient.from(client);
 
-export const deleteGameLambda: LambdaFunctionURLHandler = async (
-	event,
-	context,
-	callback,
-) => {
-	const gameId = event.pathParameters?.gameId;
-
-	if (!gameId) {
-		return {
-			statusCode: 401,
-			body: JSON.stringify({ error: '"gameId" is required' }),
-		};
-	}
-
+export const deleteGameLambda: LambdaFunctionURLHandler = async (event) => {
 	try {
+		const { gameId } = validateParamsDeleteGame(event);
+
 		const getCommand = {
 			TableName: GAMES_TABLE,
 			Key: {
@@ -36,12 +28,7 @@ export const deleteGameLambda: LambdaFunctionURLHandler = async (
 		const scanCommand = new GetCommand(getCommand);
 		const { Item } = await docClient.send(scanCommand);
 
-		if (!Item) {
-			return {
-				statusCode: 404,
-				body: JSON.stringify({ error: "Game not found" }),
-			};
-		}
+		if (!Item) return parseResponse(404, { error: "Game not found" });
 
 		const params: DeleteCommandInput = {
 			TableName: GAMES_TABLE,
@@ -51,14 +38,12 @@ export const deleteGameLambda: LambdaFunctionURLHandler = async (
 		const command = new DeleteCommand(params);
 		await docClient.send(command);
 
-		return {
-			statusCode: 200,
-		};
+		return parseResponse(200);
 	} catch (error) {
 		console.error(error);
-		return {
-			statusCode: 500,
-			body: JSON.stringify({ message: "Could not delete game", error }),
-		};
+		if (error instanceof ValidationError)
+			return parseResponse(401, { error: error.message });
+
+		return parseResponse(500, { error: "Could not delete game" });
 	}
 };
