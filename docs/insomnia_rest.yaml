@@ -1,0 +1,168 @@
+_type: export
+__export_format: 4
+__export_date: 2024-10-25T20:22:40.142Z
+__export_source: insomnia.desktop.app:v10.1.1
+resources:
+  - _id: req_077d4222bd934172b1d6d7bb02000b9c
+    parentId: wrk_e78f53ebd64d460db08d3bf7a259b2ec
+    modified: 1729887695986
+    created: 1729886831356
+    url: "{{ _.base_url }}/games/{gameId}"
+    name: Get Game
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/10.1.1
+    authentication: {}
+    metaSortKey: -1729886831356
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_e78f53ebd64d460db08d3bf7a259b2ec
+    parentId: null
+    modified: 1729886824334
+    created: 1729886824334
+    name: Games That I Played
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_fe07ff686a3b4f7c8814b3e3fd0225ee
+    parentId: wrk_e78f53ebd64d460db08d3bf7a259b2ec
+    modified: 1729887690006
+    created: 1729886859594
+    url: "{{ _.base_url }}/games"
+    name: List Games
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/10.1.1
+    authentication: {}
+    metaSortKey: -1729797107774
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_0c54670170fa46249a31cff285a447ee
+    parentId: wrk_e78f53ebd64d460db08d3bf7a259b2ec
+    modified: 1729887700612
+    created: 1729886874808
+    url: "{{ _.base_url }}/games"
+    name: Create Game
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "Forza Horizon 5"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/10.1.1
+    authentication: {}
+    metaSortKey: -1729752245983
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_67d2dd826b67488fbf07926760bfefd0
+    parentId: wrk_e78f53ebd64d460db08d3bf7a259b2ec
+    modified: 1729887706560
+    created: 1729886907176
+    url: "{{ _.base_url }}/games/bbbd0879-a5d4-4009-8f50-61888c5d422a"
+    name: Update Game
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "The 34"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/10.1.1
+    authentication: {}
+    metaSortKey: -1729729815087.5
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_25c9d2ba8ecc497b86485827c7baa38d
+    parentId: wrk_e78f53ebd64d460db08d3bf7a259b2ec
+    modified: 1729887711922
+    created: 1729886979866
+    url: "{{ _.base_url }}/games/7cdb17a3-6e28-4091-99f3-e27a36819bdd"
+    name: Delete  Game
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/10.1.1
+    authentication: {}
+    metaSortKey: -1729718599639.75
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_feab0a319d77ea9e406daf01421d689b08d314c4
+    parentId: wrk_e78f53ebd64d460db08d3bf7a259b2ec
+    modified: 1729887682249
+    created: 1729886824335
+    name: Base Environment
+    data:
+      base_url: https://q42oevbvq2.execute-api.us-east-1.amazonaws.com
+    dataPropertyOrder:
+      "&":
+        - base_url
+    color: null
+    isPrivate: false
+    metaSortKey: 1729886824335
+    _type: environment
+  - _id: jar_feab0a319d77ea9e406daf01421d689b08d314c4
+    parentId: wrk_e78f53ebd64d460db08d3bf7a259b2ec
+    modified: 1729886824336
+    created: 1729886824336
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
