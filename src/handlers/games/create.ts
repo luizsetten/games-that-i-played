@@ -18,7 +18,7 @@ const docClient = DynamoDBDocumentClient.from(client);
 
 export const createGameLambda: LambdaFunctionURLHandler = async (event) => {
 	try {
-		const { name } = validateParamsCreateGame(event);
+		const { name, finished, timePlayed } = validateParamsCreateGame(event);
 
 		const scanCommandParams: ScanCommandInput = {
 			TableName: GAMES_TABLE,
@@ -38,7 +38,7 @@ export const createGameLambda: LambdaFunctionURLHandler = async (event) => {
 		const gameId = v4();
 		const params: PutCommandInput = {
 			TableName: GAMES_TABLE,
-			Item: { gameId, name },
+			Item: { gameId, name, finished, timePlayed },
 		};
 
 		const command = new PutCommand(params);

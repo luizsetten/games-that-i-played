@@ -3,7 +3,9 @@ import { ValidationError } from "../errors/ValidationError";
 
 export interface IUpdateGameInput {
 	gameId: string;
-	name: string;
+	name?: string;
+	finished?: boolean;
+	timePlayed?: number;
 }
 
 export const validateParamsUpdateGame = (
@@ -16,11 +18,16 @@ export const validateParamsUpdateGame = (
 	if (!event.body) throw new ValidationError('"body" is required');
 
 	const body = JSON.parse(event.body);
+	const { name, finished, timePlayed } = body;
 
-	const { name } = body;
+	if (name && typeof name !== "string")
+		throw new ValidationError("'name' must be a string");
 
-	if (typeof name !== "string" || !name)
-		throw new ValidationError("'name' is required");
+	if (finished && typeof finished !== "boolean")
+		throw new ValidationError("'finished' must be boolean");
 
-	return { gameId, name };
+	if (timePlayed && (typeof timePlayed !== "number" || timePlayed < 0))
+		throw new ValidationError("'timePlayed' must be a positive number");
+
+	return { gameId, name, finished, timePlayed };
 };

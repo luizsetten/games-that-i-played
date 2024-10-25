@@ -3,6 +3,8 @@ import {
 	DynamoDBDocumentClient,
 	GetCommand,
 	type GetCommandInput,
+	ScanCommand,
+	type ScanCommandInput,
 	UpdateCommand,
 	type UpdateCommandInput,
 } from "@aws-sdk/lib-dynamodb";
@@ -17,26 +19,59 @@ const docClient = DynamoDBDocumentClient.from(client);
 
 export const updateGameLambda: LambdaFunctionURLHandler = async (event) => {
 	try {
-		const { gameId, name } = validateParamsUpdateGame(event);
+		const { gameId, name, finished, timePlayed } =
+			validateParamsUpdateGame(event);
 
-		const getCommand: GetCommandInput = {
+		const getCommandParams: GetCommandInput = {
 			TableName: GAMES_TABLE,
 			Key: {
 				gameId,
 			},
 		};
 
-		const scanCommand = new GetCommand(getCommand);
-		const { Item } = await docClient.send(scanCommand);
+		const getCommand = new GetCommand(getCommandParams);
+		const { Item } = await docClient.send(getCommand);
 
 		if (!Item) return parseResponse(404, { error: "Game not found" });
+
+		const updates: {
+			[key: string]: {
+				Action: "PUT";
+				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				Value: any;
+			};
+		} = {};
+
+		if (name) {
+			const scanCommandParams: ScanCommandInput = {
+				TableName: GAMES_TABLE,
+				FilterExpression: "#name = :name_search",
+				ExpressionAttributeNames: { "#name": "name" },
+				ExpressionAttributeValues: { ":name_search": name },
+			};
+
+			const scanCommand = new ScanCommand(scanCommandParams);
+			const { Items } = await docClient.send(scanCommand);
+			console.log(Items);
+
+			if (Items && Items.filter((game) => game.gameId !== gameId).length > 0)
+				return parseResponse(409, {
+					error: "Game with the same name already exists",
+				});
+
+			updates.name = { Action: "PUT", Value: name };
+		}
+
+		if (typeof finished === "boolean")
+			updates.finished = { Action: "PUT", Value: finished };
+
+		if (typeof timePlayed === "number")
+			updates.timePlayed = { Action: "PUT", Value: timePlayed };
 
 		const params: UpdateCommandInput = {
 			TableName: GAMES_TABLE,
 			Key: { gameId },
-			AttributeUpdates: {
-				name: { Value: name, Action: "PUT" },
-			},
+			AttributeUpdates: updates,
 		};
 
 		const command = new UpdateCommand(params);
